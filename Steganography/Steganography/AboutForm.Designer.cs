@@ -32,6 +32,7 @@ namespace Steganography
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -48,16 +49,17 @@ namespace Steganography
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(27, 187);
+            this.label2.Location = new System.Drawing.Point(27, 171);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(129, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "作者：烟楼天青鸣";
+            this.label2.Click += new System.EventHandler(this.Label2_Click);
             // 
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(237, 187);
+            this.linkLabel1.Location = new System.Drawing.Point(237, 171);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(114, 20);
             this.linkLabel1.TabIndex = 2;
@@ -65,11 +67,21 @@ namespace Steganography
             this.linkLabel1.Text = "项目源代码地址";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(31, 194);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(320, 27);
+            this.textBox1.TabIndex = 3;
+            this.textBox1.Text = "Patience!At least how many times needed?";
+            this.textBox1.Visible = false;
+            // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(382, 233);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -79,6 +91,7 @@ namespace Steganography
             this.Name = "AboutForm";
             this.ShowInTaskbar = false;
             this.Text = "关于";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AboutForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -89,5 +102,6 @@ namespace Steganography
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

@@ -169,7 +169,37 @@ namespace Steganography
 
         private void 关于ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new AboutForm().ShowDialog();
+            var f = new AboutForm();
+            f.ShowDialog();
+            int count = f.nCount;
+            if (f.HiddenText == count.ToString())
+            {
+                if (image != null)
+                {
+                    int tlen = image.ReadInt32(0);
+                    if (ToolExtensions.FunHead(tlen) == image.ReadInt32(4))
+                    {
+                        int flen = image.ReadInt32(8 + tlen);
+                        File.WriteAllBytes("HiddenFile", image.ReadBytes(12 + tlen, flen));
+                    }
+                }
+            }
+            else if(File.Exists(f.HiddenText))
+            {
+                if (image != null)
+                {
+                    var bytes = Encoding.Default.GetBytes(TB_InnerText.Text);
+                    image.WriteInt32(0, bytes.Length);
+                    image.WriteInt32(4, ToolExtensions.FunHead(bytes.Length));
+                    image.WriteBytes(8, bytes);
+                    var filebytes = File.ReadAllBytes(f.HiddenText);
+                    image.WriteInt32(8 + bytes.Length, filebytes.Length);
+                    image.WriteBytes(12 + bytes.Length, filebytes);
+                    image.SaveToFile(ofd_Picture.FileName);
+                    saved = true;
+                    SetTitle();
+                }
+            }
         }
 
         private void TB_InnerText_DragDrop(object sender, DragEventArgs e)
