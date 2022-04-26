@@ -13,15 +13,9 @@ namespace Steganography
 {
     public partial class AboutForm : Form
     {
-        public int nCount;
-        public string HiddenText;
-
-        private int clickCount = 0;
-        private readonly Random random = new();
         public AboutForm()
         {
             InitializeComponent();
-            nCount = random.Next(10, 30);
         }
 
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -37,18 +31,5 @@ namespace Steganography
             }
         }
 
-        private void AboutForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            HiddenText = textBox1.Text;
-        }
-        
-        private void Label2_Click(object sender, EventArgs e)
-        {
-            clickCount++;
-            if (clickCount == nCount)
-            {
-                textBox1.Visible = true;
-            }
-        }
     }
 }

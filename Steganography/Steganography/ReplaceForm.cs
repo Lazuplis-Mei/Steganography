@@ -154,7 +154,7 @@ namespace Steganography
                 }
             }
             mainForm.TB_InnerText.Text = 
-                mainForm.TB_InnerText.Text.Substring(0, ss)
+                mainForm.TB_InnerText.Text[..ss]
                 + TB_ReplaceText.Text
                 + mainForm.TB_InnerText.Text[(ss + slen)..];
             mainForm.TB_InnerText.Select(ss, TB_ReplaceText.TextLength);

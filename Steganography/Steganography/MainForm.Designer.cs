@@ -40,8 +40,13 @@ namespace Steganography
             this.编辑ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查找ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.替换ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.插入文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.提取文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查看ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.字体ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.加密内容ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ofd_Picture = new System.Windows.Forms.OpenFileDialog();
@@ -50,6 +55,8 @@ namespace Steganography
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lable_contentSize = new System.Windows.Forms.ToolStripStatusLabel();
             this.fontDlg = new System.Windows.Forms.FontDialog();
+            this.ofd_File = new System.Windows.Forms.OpenFileDialog();
+            this.sfd_File = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -61,6 +68,7 @@ namespace Steganography
             this.TB_InnerText.Location = new System.Drawing.Point(0, 28);
             this.TB_InnerText.Multiline = true;
             this.TB_InnerText.Name = "TB_InnerText";
+            this.TB_InnerText.ReadOnly = true;
             this.TB_InnerText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TB_InnerText.Size = new System.Drawing.Size(682, 393);
             this.TB_InnerText.TabIndex = 2;
@@ -75,6 +83,7 @@ namespace Steganography
             this.文件ToolStripMenuItem,
             this.编辑ToolStripMenuItem,
             this.查看ToolStripMenuItem,
+            this.设置ToolStripMenuItem,
             this.帮助ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -105,6 +114,7 @@ namespace Steganography
             // 
             // 保存ToolStripMenuItem
             // 
+            this.保存ToolStripMenuItem.Enabled = false;
             this.保存ToolStripMenuItem.Name = "保存ToolStripMenuItem";
             this.保存ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.保存ToolStripMenuItem.Size = new System.Drawing.Size(236, 26);
@@ -113,6 +123,7 @@ namespace Steganography
             // 
             // 另存为ToolStripMenuItem
             // 
+            this.另存为ToolStripMenuItem.Enabled = false;
             this.另存为ToolStripMenuItem.Name = "另存为ToolStripMenuItem";
             this.另存为ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
@@ -136,7 +147,10 @@ namespace Steganography
             // 
             this.编辑ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.查找ToolStripMenuItem,
-            this.替换ToolStripMenuItem});
+            this.替换ToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.插入文件ToolStripMenuItem,
+            this.提取文件ToolStripMenuItem});
             this.编辑ToolStripMenuItem.Name = "编辑ToolStripMenuItem";
             this.编辑ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.编辑ToolStripMenuItem.Text = "编辑";
@@ -157,6 +171,27 @@ namespace Steganography
             this.替换ToolStripMenuItem.Text = "替换(H)";
             this.替换ToolStripMenuItem.Click += new System.EventHandler(this.替换ToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(199, 6);
+            // 
+            // 插入文件ToolStripMenuItem
+            // 
+            this.插入文件ToolStripMenuItem.Enabled = false;
+            this.插入文件ToolStripMenuItem.Name = "插入文件ToolStripMenuItem";
+            this.插入文件ToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.插入文件ToolStripMenuItem.Text = "插入文件";
+            this.插入文件ToolStripMenuItem.Click += new System.EventHandler(this.插入文件ToolStripMenuItem_Click);
+            // 
+            // 提取文件ToolStripMenuItem
+            // 
+            this.提取文件ToolStripMenuItem.Enabled = false;
+            this.提取文件ToolStripMenuItem.Name = "提取文件ToolStripMenuItem";
+            this.提取文件ToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.提取文件ToolStripMenuItem.Text = "提取文件";
+            this.提取文件ToolStripMenuItem.Click += new System.EventHandler(this.提取文件ToolStripMenuItem_Click);
+            // 
             // 查看ToolStripMenuItem
             // 
             this.查看ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -172,6 +207,23 @@ namespace Steganography
             this.字体ToolStripMenuItem.Text = "字体";
             this.字体ToolStripMenuItem.Click += new System.EventHandler(this.字体ToolStripMenuItem_Click);
             // 
+            // 设置ToolStripMenuItem
+            // 
+            this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.加密内容ToolStripMenuItem});
+            this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
+            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.设置ToolStripMenuItem.Text = "设置";
+            // 
+            // 加密内容ToolStripMenuItem
+            // 
+            this.加密内容ToolStripMenuItem.CheckOnClick = true;
+            this.加密内容ToolStripMenuItem.Enabled = false;
+            this.加密内容ToolStripMenuItem.Name = "加密内容ToolStripMenuItem";
+            this.加密内容ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.加密内容ToolStripMenuItem.Text = "加密内容";
+            this.加密内容ToolStripMenuItem.Click += new System.EventHandler(this.加密内容ToolStripMenuItem_Click);
+            // 
             // 帮助ToolStripMenuItem
             // 
             this.帮助ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -183,7 +235,7 @@ namespace Steganography
             // 关于ToolStripMenuItem
             // 
             this.关于ToolStripMenuItem.Name = "关于ToolStripMenuItem";
-            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
             this.关于ToolStripMenuItem.Text = "关于";
             this.关于ToolStripMenuItem.Click += new System.EventHandler(this.关于ToolStripMenuItem_Click);
             // 
@@ -229,6 +281,16 @@ namespace Steganography
             this.fontDlg.FontMustExist = true;
             this.fontDlg.ShowColor = true;
             // 
+            // ofd_File
+            // 
+            this.ofd_File.Filter = "所有文件|*.*";
+            this.ofd_File.Title = "选择文件";
+            // 
+            // sfd_File
+            // 
+            this.sfd_File.Filter = "所有文件|*.*";
+            this.sfd_File.Title = "保存文件";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -273,6 +335,13 @@ namespace Steganography
         private System.Windows.Forms.ToolStripMenuItem 查看ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 字体ToolStripMenuItem;
         private System.Windows.Forms.FontDialog fontDlg;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 插入文件ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 提取文件ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 加密内容ToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog ofd_File;
+        private System.Windows.Forms.SaveFileDialog sfd_File;
     }
 }
 
