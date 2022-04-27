@@ -85,6 +85,7 @@ namespace Steganography
                     加密内容ToolStripMenuItem.Checked = true;
                 }
                 var textBytes = image.ReadBytes(ref pos, textLen);
+                textBytes = Decrypt(textBytes, password);
                 try
                 {
                     textBytes = Decompress(textBytes);
@@ -94,7 +95,6 @@ namespace Steganography
                 {
                     //数据无法解压
                 }
-                textBytes = Decrypt(textBytes, password);
 
                 userChange = false;
                 TB_InnerText.Text = Encoding.Default.GetString(textBytes);
@@ -123,9 +123,9 @@ namespace Steganography
                     password = passwordBox.Password;
                 }
                 var textBytes = Encoding.Default.GetBytes(TB_InnerText.Text);
-                textBytes = Encrypt(textBytes, password);
                 if (压缩数据ToolStripMenuItem.Checked)
                     textBytes = Compress(textBytes);
+                textBytes = Encrypt(textBytes, password);
 
 
                 var size = image.GetContentSize();
@@ -149,9 +149,9 @@ namespace Steganography
                 {
                     var filenameBytes = Encoding.Default.GetBytes(ofd_File.FileName);
                     var fileBytes = File.ReadAllBytes(ofd_File.FileName);
-                    fileBytes = Encrypt(fileBytes, password);
                     if (压缩数据ToolStripMenuItem.Checked)
                         fileBytes = Compress(fileBytes);
+                    fileBytes = Encrypt(fileBytes, password);
                     size -= 12;
                     if (filenameBytes.Length + fileBytes.Length > size)
                     {
@@ -311,9 +311,9 @@ namespace Steganography
                 pos = 32 + textLen + filenameLen;
                 int fileSize = image.ReadInt32(ref pos);
                 var fileBytes = image.ReadBytes(ref pos, fileSize);
+                fileBytes = Decrypt(fileBytes, password);
                 if (压缩数据ToolStripMenuItem.Checked)
                     fileBytes = Decompress(fileBytes);
-                fileBytes = Decrypt(fileBytes, password);
                 File.WriteAllBytes(sfd_File.FileName, fileBytes);
             }
         }
