@@ -19,8 +19,8 @@ namespace Steganography
     {
         private Bitmap image;
 
-        private bool saved = true;
-        private bool userc = true;
+        private bool imageSaved = true;
+        private bool userChange = true;
 
         private string password = string.Empty;
 
@@ -35,7 +35,7 @@ namespace Steganography
         private void SetTitle()
         {
             Text = Path.GetFileName(ofd_Picture.FileName) + " - Steganography";
-            Text = saved ? Text : "*" + Text;
+            Text = imageSaved ? Text : "*" + Text;
         }
 
         private void OpenPicture()
@@ -51,7 +51,7 @@ namespace Steganography
             ofd_Picture.FileName = path;
             image?.Dispose();
             image = LoadImage(path);
-            saved = true;
+            imageSaved = true;
             SetTitle();
             ReadContent();
             lable_contentSize.Text = BytesToKB(image.GetContentSize());
@@ -60,40 +60,50 @@ namespace Steganography
             另存为ToolStripMenuItem.Enabled = true;
             插入文件ToolStripMenuItem.Enabled = true;
             加密内容ToolStripMenuItem.Enabled = true;
+            压缩数据ToolStripMenuItem.Enabled = true;
         }
 
         private void ReadContent()
         {
-            int len = image.ReadInt32(0);
+            int pos = 0;
+            int textLen = image.ReadInt32(ref pos);
 
-            if (FunHead(len) == image.ReadInt32(4))
+            if (FunHead(textLen) == image.ReadInt32(ref pos))
             {
-                byte[] head = image.ReadBytes(8, 16);
+                var hash = image.ReadBytes(ref pos, 16);
                 password = string.Empty;
-                if (!EmptyData.SequenceEqual(head))
+                if (!EmptyData.SequenceEqual(hash))
                 {
                     var passwordBox = new PasswordBox();
                     passwordBox.ShowDialog();
                     password = passwordBox.Password;
-                    if (!head.SequenceEqual(GetMD5(password)))
+                    if (!GetMD5(password).SequenceEqual(hash))
                     {
                         MBoxError("密码不正确");
                         Environment.Exit(-1);
                     }
                     加密内容ToolStripMenuItem.Checked = true;
                 }
-                var bytes = image.ReadBytes(16 + 8, len);
-                if (password != string.Empty)
-                    bytes = Decrypt(bytes, password);
-
-                userc = false;
-                TB_InnerText.Text = Encoding.Default.GetString(bytes);
-                userc = true;
-                int fnLen = image.ReadInt32(16 + 8 + len);
-                if (FunHead(fnLen) == image.ReadInt32(16 + 12 + len))
+                var textBytes = image.ReadBytes(ref pos, textLen);
+                try
                 {
-                    var fnbytes = image.ReadBytes(16 + 16 + len, fnLen);
-                    sfd_File.FileName = Encoding.Default.GetString(fnbytes);
+                    textBytes = Decompress(textBytes);
+                    压缩数据ToolStripMenuItem.Checked = true;
+                }
+                catch (InvalidDataException)
+                {
+                    //数据无法解压
+                }
+                textBytes = Decrypt(textBytes, password);
+
+                userChange = false;
+                TB_InnerText.Text = Encoding.Default.GetString(textBytes);
+                userChange = true;
+                int filenameLen = image.ReadInt32(ref pos);
+                if (FunHead(filenameLen) == image.ReadInt32(ref pos))
+                {
+                    var filenameBytes = image.ReadBytes(ref pos, filenameLen);
+                    sfd_File.FileName = Encoding.Default.GetString(filenameBytes);
                     提取文件ToolStripMenuItem.ToolTipText = $"待提取文件：[{sfd_File.FileName}]";
                     提取文件ToolStripMenuItem.CheckState = CheckState.Indeterminate;
                     提取文件ToolStripMenuItem.Enabled = true;
@@ -112,14 +122,14 @@ namespace Steganography
                     passwordBox.ShowDialog();
                     password = passwordBox.Password;
                 }
-                image.WriteBytes(8, GetMD5(password));
+                var textBytes = Encoding.Default.GetBytes(TB_InnerText.Text);
+                textBytes = Encrypt(textBytes, password);
+                if (压缩数据ToolStripMenuItem.Checked)
+                    textBytes = Compress(textBytes);
 
-                var bytes = Encoding.Default.GetBytes(TB_InnerText.Text);
-                if (password != string.Empty)
-                    bytes = Encrypt(bytes, password);
 
                 var size = image.GetContentSize();
-                if (bytes.Length > size)
+                if (textBytes.Length > size)
                 {
                     MBoxError("内容超出图片承载的容量");
                     return;
@@ -127,33 +137,36 @@ namespace Steganography
                 提取文件ToolStripMenuItem.ToolTipText = null;
                 提取文件ToolStripMenuItem.CheckState = CheckState.Unchecked;
                 提取文件ToolStripMenuItem.Enabled = false;
-                image.WriteInt32(0, bytes.Length);
-                image.WriteInt32(4, FunHead(bytes.Length));
-                image.WriteBytes(16 + 8, bytes);
-                size -= bytes.Length;
+                int pos = 0;
+                image.WriteInt32(ref pos, textBytes.Length);
+                image.WriteInt32(ref pos, FunHead(textBytes.Length));
+                image.WriteBytes(ref pos, GetMD5(password));
+                image.WriteBytes(ref pos, textBytes);
+                size -= textBytes.Length;
 
                 if (插入文件ToolStripMenuItem.CheckState == CheckState.Indeterminate
                     && File.Exists(ofd_File.FileName))
                 {
-                    var fnbytes = Encoding.Default.GetBytes(ofd_File.FileName);
-                    var filebytes = File.ReadAllBytes(ofd_File.FileName);
-                    if (password != string.Empty)
-                        filebytes = Encrypt(filebytes, password);
-                    size -= 8;
-                    if (fnbytes.Length + filebytes.Length > size)
+                    var filenameBytes = Encoding.Default.GetBytes(ofd_File.FileName);
+                    var fileBytes = File.ReadAllBytes(ofd_File.FileName);
+                    fileBytes = Encrypt(fileBytes, password);
+                    if (压缩数据ToolStripMenuItem.Checked)
+                        fileBytes = Compress(fileBytes);
+                    size -= 12;
+                    if (filenameBytes.Length + fileBytes.Length > size)
                     {
                         MBoxError("插入的文件超出图片承载的容量");
                         return;
                     }
-                    image.WriteInt32(16 + 8 + bytes.Length, fnbytes.Length);
-                    image.WriteInt32(16 + 12 + bytes.Length, FunHead(fnbytes.Length));
-                    image.WriteBytes(16 + 16 + bytes.Length, fnbytes);
-                    image.WriteInt32(16 + 16 + bytes.Length + fnbytes.Length, filebytes.Length);
-                    image.WriteBytes(16 + 20 + bytes.Length + fnbytes.Length, filebytes);
+                    image.WriteInt32(ref pos, filenameBytes.Length);
+                    image.WriteInt32(ref pos, FunHead(filenameBytes.Length));
+                    image.WriteBytes(ref pos, filenameBytes);
+                    image.WriteInt32(ref pos, fileBytes.Length);
+                    image.WriteBytes(ref pos, fileBytes);
                 }
 
                 image.SaveToFile(filepath);
-                saved = true;
+                imageSaved = true;
                 SetTitle();
             }
         }
@@ -166,7 +179,7 @@ namespace Steganography
             }
             else
             {
-                if (saved)
+                if (imageSaved)
                 {
                     OpenPicture();
                 }
@@ -192,7 +205,7 @@ namespace Steganography
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (saved)
+            if (imageSaved)
                 return;
             if (MBoxQuestion("文件未保存，确定要退出吗？", "退出？"))
                 return;
@@ -209,9 +222,9 @@ namespace Steganography
 
         private void TB_InnerText_TextChanged(object sender, EventArgs e)
         {
-            if (userc && image != null && saved)
+            if (userChange && image != null && imageSaved)
             {
-                saved = false;
+                imageSaved = false;
                 SetTitle();
             }
         }
@@ -254,7 +267,7 @@ namespace Steganography
             }
             else
             {
-                if (saved)
+                if (imageSaved)
                 {
                     InternalOpenPicture(localFilePath);
                 }
@@ -282,7 +295,7 @@ namespace Steganography
             {
                 插入文件ToolStripMenuItem.ToolTipText = $"已选择文件：[{ofd_File.FileName}]";
                 插入文件ToolStripMenuItem.CheckState = CheckState.Indeterminate;
-                saved = false;
+                imageSaved = false;
                 SetTitle();
             }
         }
@@ -291,19 +304,23 @@ namespace Steganography
         {
             if (image != null && sfd_File.ShowDialog() == DialogResult.OK)
             {
-                int len = image.ReadInt32(0);
-                int fnLen = image.ReadInt32(16 + 8 + len);
-                int fsize = image.ReadInt32(16 + 16 + len + fnLen);
-                var fbytes = image.ReadBytes(16 + 20 + len + fnLen, fsize);
-                if (password != string.Empty)
-                    fbytes = Decrypt(fbytes, password);
-                File.WriteAllBytes(sfd_File.FileName, fbytes);
+                int pos = 0;
+                int textLen = image.ReadInt32(ref pos);
+                pos = 24 + textLen;
+                int filenameLen = image.ReadInt32(ref pos);
+                pos = 32 + textLen + filenameLen;
+                int fileSize = image.ReadInt32(ref pos);
+                var fileBytes = image.ReadBytes(ref pos, fileSize);
+                if (压缩数据ToolStripMenuItem.Checked)
+                    fileBytes = Decompress(fileBytes);
+                fileBytes = Decrypt(fileBytes, password);
+                File.WriteAllBytes(sfd_File.FileName, fileBytes);
             }
         }
 
         private void 加密内容ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saved = false;
+            imageSaved = false;
             SetTitle();
         }
     }

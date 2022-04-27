@@ -23,7 +23,7 @@ namespace Steganography
             var url = "https://github.com/Lazuplis-Mei/Steganography";
             try
             {
-                Process.Start(url);
+                Process.Start("explorer.exe", url);
             }
             catch (Win32Exception)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -24,18 +25,24 @@ namespace Steganography
             return md5.ComputeHash(bytes);
         }
 
-        public static byte[] Encrypt(byte[] bytes, string str)
+        public static byte[] Encrypt(byte[] bytes, string password)
         {
+            if (string.IsNullOrEmpty(password))
+                return bytes;
+
             var key = new byte[32];
-            Encoding.Default.GetBytes(str).CopyTo(key, 0);
+            Encoding.Default.GetBytes(password).CopyTo(key, 0);
             aes.Key = key;
             return aes.EncryptCbc(bytes, EmptyData);
         }
 
-        public static byte[] Decrypt(byte[] bytes, string str)
+        public static byte[] Decrypt(byte[] bytes, string password)
         {
+            if (string.IsNullOrEmpty(password))
+                return bytes;
+
             var key = new byte[32];
-            Encoding.Default.GetBytes(str).CopyTo(key, 0);
+            Encoding.Default.GetBytes(password).CopyTo(key, 0);
             aes.Key = key;
             return aes.DecryptCbc(bytes, EmptyData);
         }
@@ -73,12 +80,12 @@ namespace Steganography
 
         public static int FunHead(int n)
         {
-            return (int)Math.Floor(n * Math.Log(n));
+            return (int)Math.Floor(Math.Pow(n, 0.8) * Math.Log(n));
         }
 
         public static int GetContentSize(this Bitmap self)
         {
-            return (self.Width * self.Height) / 2 - 8 - 16;
+            return (self.Width * self.Height) / 2 - 24;
         }
 
         public static void SaveToFile(this Bitmap self, string filepath)
@@ -88,7 +95,7 @@ namespace Steganography
             self.Save(filepath, ImageFormat.Png);
         }
 
-        public static byte ReadByte(this Bitmap self, int pos)
+        private static byte ReadByte(this Bitmap self, int pos)
         {
             pos *= 2;
 
@@ -111,22 +118,23 @@ namespace Steganography
             return (byte)bx;
         }
 
-        public static byte[] ReadBytes(this Bitmap self, int pos, int len)
+        public static byte[] ReadBytes(this Bitmap self, ref int pos, int len)
         {
             var bytes = new byte[len];
             for (int i = 0; i < len; i++)
             {
                 bytes[i] = self.ReadByte(pos + i);
             }
+            pos += len;
             return bytes;
         }
 
-        public static int ReadInt32(this Bitmap self, int pos)
+        public static int ReadInt32(this Bitmap self, ref int pos)
         {
-            return BitConverter.ToInt32(self.ReadBytes(pos, 4));
+            return BitConverter.ToInt32(self.ReadBytes(ref pos, 4));
         }
 
-        public static void WriteByte(this Bitmap self, int pos, byte value)
+        private static void WriteByte(this Bitmap self, int pos, byte value)
         {
             pos *= 2;
 
@@ -159,18 +167,36 @@ namespace Steganography
             return Color.FromArgb(a, r, g, b);
         }
 
-        public static void WriteBytes(this Bitmap self, int pos, byte[] bytes)
+        public static void WriteBytes(this Bitmap self, ref int pos, byte[] bytes)
         {
             for (int i = 0; i < bytes.Length; i++)
             {
                 self.WriteByte(pos + i, bytes[i]);
             }
+            pos += bytes.Length;
         }
 
-        public static void WriteInt32(this Bitmap self, int pos, int value)
+        public static void WriteInt32(this Bitmap self, ref int pos, int value)
         {
-            self.WriteBytes(pos, BitConverter.GetBytes(value));
+            self.WriteBytes(ref pos, BitConverter.GetBytes(value));
         }
 
+        public static byte[] Compress(byte[] bytes)
+        {
+            using var memory = new MemoryStream();
+            using var gZip = new GZipStream(memory, CompressionMode.Compress);
+            gZip.Write(bytes, 0, bytes.Length);
+            gZip.Close();
+            return memory.ToArray();
+        }
+
+        public static byte[] Decompress(byte[] bytes)
+        {
+            using var gZip = new GZipStream(new MemoryStream(bytes), CompressionMode.Decompress);
+            using var memory = new MemoryStream();
+            gZip.CopyTo(memory);
+            gZip.Close();
+            return memory.ToArray();
+        }
     }
 }

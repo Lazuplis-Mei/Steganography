@@ -40,15 +40,16 @@ namespace Steganography
             this.label1.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.Location = new System.Drawing.Point(27, 20);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(324, 135);
+            this.label1.Size = new System.Drawing.Size(324, 189);
             this.label1.TabIndex = 0;
-            this.label1.Text = "本程序利用人眼无法察觉的\r\n32位深像素点颜色ARGB通道值\r\n最后一个二进制位的差异\r\n达到隐藏信息的效果\r\n2个像素点可以隐藏一个字节的信息";
+            this.label1.Text = "本程序利用人眼无法察觉的\r\n32位深像素点颜色ARGB通道值\r\n最后一个二进制位的差异\r\n达到隐藏信息的效果\r\n2个像素点可以隐藏一个字节的信息\r\n加密使用AES" +
+    "算法\r\n压缩数据使用GZip";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(27, 171);
+            this.label2.Location = new System.Drawing.Point(27, 224);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(129, 20);
             this.label2.TabIndex = 1;
@@ -57,7 +58,7 @@ namespace Steganography
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(237, 171);
+            this.linkLabel1.Location = new System.Drawing.Point(237, 224);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(114, 20);
             this.linkLabel1.TabIndex = 2;
@@ -69,7 +70,7 @@ namespace Steganography
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(382, 233);
+            this.ClientSize = new System.Drawing.Size(382, 253);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
