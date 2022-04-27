@@ -86,14 +86,17 @@ namespace Steganography
                 }
                 var textBytes = image.ReadBytes(ref pos, textLen);
                 textBytes = Decrypt(textBytes, password);
-                try
+                if (textLen > 0)
                 {
-                    textBytes = Decompress(textBytes);
-                    压缩数据ToolStripMenuItem.Checked = true;
-                }
-                catch (InvalidDataException)
-                {
-                    //数据无法解压
+                    try
+                    {
+                        textBytes = Decompress(textBytes);
+                        压缩数据ToolStripMenuItem.Checked = true;
+                    }
+                    catch (InvalidDataException)
+                    {
+                        //数据无法解压
+                    }
                 }
 
                 userChange = false;
@@ -313,12 +316,27 @@ namespace Steganography
                 var fileBytes = image.ReadBytes(ref pos, fileSize);
                 fileBytes = Decrypt(fileBytes, password);
                 if (压缩数据ToolStripMenuItem.Checked)
-                    fileBytes = Decompress(fileBytes);
+                {
+                    try
+                    {
+                        fileBytes = Decompress(fileBytes);
+                    }
+                    catch (InvalidDataException)
+                    {
+                        压缩数据ToolStripMenuItem.Checked = false;
+                    }
+                }
                 File.WriteAllBytes(sfd_File.FileName, fileBytes);
             }
         }
 
         private void 加密内容ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            imageSaved = false;
+            SetTitle();
+        }
+
+        private void 压缩数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             imageSaved = false;
             SetTitle();
