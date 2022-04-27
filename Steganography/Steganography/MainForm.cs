@@ -86,7 +86,7 @@ namespace Steganography
                 }
                 var textBytes = image.ReadBytes(ref pos, textLen);
                 textBytes = Decrypt(textBytes, password);
-                if (textLen > 0)
+                if (textBytes.Length > 0)
                 {
                     try
                     {

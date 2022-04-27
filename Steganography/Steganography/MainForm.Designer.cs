@@ -160,7 +160,7 @@ namespace Steganography
             // 
             this.查找ToolStripMenuItem.Name = "查找ToolStripMenuItem";
             this.查找ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.查找ToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.查找ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.查找ToolStripMenuItem.Text = "查找(F)";
             this.查找ToolStripMenuItem.Click += new System.EventHandler(this.查找ToolStripMenuItem_Click);
             // 
@@ -168,20 +168,20 @@ namespace Steganography
             // 
             this.替换ToolStripMenuItem.Name = "替换ToolStripMenuItem";
             this.替换ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.替换ToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.替换ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.替换ToolStripMenuItem.Text = "替换(H)";
             this.替换ToolStripMenuItem.Click += new System.EventHandler(this.替换ToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(199, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(221, 6);
             // 
             // 插入文件ToolStripMenuItem
             // 
             this.插入文件ToolStripMenuItem.Enabled = false;
             this.插入文件ToolStripMenuItem.Name = "插入文件ToolStripMenuItem";
-            this.插入文件ToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.插入文件ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.插入文件ToolStripMenuItem.Text = "插入文件";
             this.插入文件ToolStripMenuItem.Click += new System.EventHandler(this.插入文件ToolStripMenuItem_Click);
             // 
@@ -189,7 +189,7 @@ namespace Steganography
             // 
             this.提取文件ToolStripMenuItem.Enabled = false;
             this.提取文件ToolStripMenuItem.Name = "提取文件ToolStripMenuItem";
-            this.提取文件ToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.提取文件ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.提取文件ToolStripMenuItem.Text = "提取文件";
             this.提取文件ToolStripMenuItem.Click += new System.EventHandler(this.提取文件ToolStripMenuItem_Click);
             // 
@@ -204,7 +204,7 @@ namespace Steganography
             // 字体ToolStripMenuItem
             // 
             this.字体ToolStripMenuItem.Name = "字体ToolStripMenuItem";
-            this.字体ToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+            this.字体ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.字体ToolStripMenuItem.Text = "字体";
             this.字体ToolStripMenuItem.Click += new System.EventHandler(this.字体ToolStripMenuItem_Click);
             // 
@@ -246,7 +246,7 @@ namespace Steganography
             // 关于ToolStripMenuItem
             // 
             this.关于ToolStripMenuItem.Name = "关于ToolStripMenuItem";
-            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.关于ToolStripMenuItem.Text = "关于";
             this.关于ToolStripMenuItem.Click += new System.EventHandler(this.关于ToolStripMenuItem_Click);
             // 
